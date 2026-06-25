@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* Apply Outfit font globally */
+html, body, [class*="css"], [class*="st-"], .stMarkdown {
+    font-family: 'Outfit', sans-serif !important;
+}
+
+/* Custom backgrounds and layout */
+.stApp {
+    background: radial-gradient(circle at 10% 20%, rgba(14, 16, 26, 1) 0%, rgba(20, 24, 43, 1) 90.1%) !important;
+    color: #e2e8f0 !important;
+}
+
+/* Header customization */
+h1 {
+    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px !important;
+    margin-bottom: 0px !important;
+    padding-bottom: 5px !important;
+}
+
+h2, h3 {
+    color: #c084fc !important;
+    font-weight: 600 !important;
+}
+
+/* Premium card layout */
+.glass-container {
+    background: rgba(30, 41, 59, 0.45) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.3s ease !important;
+}
+
+.glass-container:hover {
+    border-color: rgba(168, 85, 247, 0.3) !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Customized Text Input Areas */
+textarea {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    color: #f8fafc !important;
+    padding: 14px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-size: 16px !important;
+}
+
+textarea:focus {
+    border-color: #a855f7 !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.35) !important;
+    background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+textarea:disabled {
+    color: #cbd5e1 !important;
+    -webkit-text-fill-color: #cbd5e1 !important; /* Forces Safari/iOS to render text color properly */
+    opacity: 1 !important; /* Prevents browsers from lowering opacity */
+    background-color: rgba(15, 23, 42, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    cursor: not-allowed !important;
+}
+
+/* Premium Button Styling - Base & Secondary */
+.stButton > button {
+    background: rgba(30, 41, 59, 0.3) !important;
+    color: #cbd5e1 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 12px 28px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    height: 48px !important;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px) !important;
+    background: rgba(30, 41, 59, 0.6) !important;
+    border-color: rgba(168, 85, 247, 0.4) !important;
+    color: #f8fafc !important;
+}
+
+.stButton > button:active {
+    transform: translateY(0) !important;
+}
+
+/* Primary Button Override */
+.stButton > button[kind="primary"], 
+.stButton > button[data-testid="stBaseButton-primary"] {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35) !important;
+}
+
+.stButton > button[kind="primary"]:hover, 
+.stButton > button[data-testid="stBaseButton-primary"]:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%) !important;
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.45) !important;
+    color: white !important;
+}
+
+/* Metrics Badges */
+.metric-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-right: 8px;
+    margin-top: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metric-latency {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
+.metric-rate {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+    border-color: rgba(34, 197, 94, 0.25);
+}
+
+.metric-status {
+    background-color: rgba(168, 85, 247, 0.15);
+    color: #e9d5ff;
+    border-color: rgba(168, 85, 247, 0.25);
+}
+
+/* Sidebar Custom Styling */
+section[data-testid="stSidebar"] {
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+section[data-testid="stSidebar"] .stMarkdown h2 {
+    color: #a5b4fc !important;
+}
+
+/* Selectbox Customizations */
+div[data-baseweb="select"] > div {
+    background-color: rgba(15, 23, 42, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+}
+
+

@@ -1,0 +1,21 @@
+# Portable Python runtime & packaging files
+python-portable/
+python-nuget.zip
+python.nuspec
+
+# PyTorch Model weights cache (large 2.4GB binary file)
+model_cache/
+
+# Python bytecode caches
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Streamlit local runtime folders
+.streamlit/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini

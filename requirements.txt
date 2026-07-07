@@ -1,8 +1,5 @@
+streamlit
+torch
 transformers
 sentencepiece
-streamlit
-fastapi
-uvicorn
-requests
-torch
 huggingface_hub

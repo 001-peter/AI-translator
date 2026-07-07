@@ -1,7 +1,7 @@
 import os
 import time
 import torch
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Define a local model cache directory to keep the project self-contained
 CACHE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "model_cache")
@@ -39,7 +39,7 @@ SUPPORTED_LANGUAGES = {
 }
 
 class TranslationEngine:
-    def __init__(self, model_name=MODEL_NAME, use_quantization=True):
+    def __init__(self, model_name=MODEL_NAME, use_quantization=False):
         self.model_name = model_name
         self.use_quantization = use_quantization
         self.tokenizer = None
@@ -47,43 +47,43 @@ class TranslationEngine:
         self.load_model()
         
     def load_model(self):
-        local_path = os.path.join(CACHE_DIR, "local_nllb")
-        local_files_only = False
-        if os.path.exists(local_path) and os.path.exists(os.path.join(local_path, "pytorch_model.bin")):
-            load_path = local_path
+        # We load the model from cache_dir/local_nllb
+        local_model_path = os.path.join(CACHE_DIR, "local_nllb")
+        if os.path.exists(local_model_path):
+            load_path = local_model_path
             local_files_only = True
-            print(f"Loading tokenizer and model from local path: {load_path}")
+            print(f"Loading model/tokenizer from local path: {load_path}")
         else:
             load_path = self.model_name
-            print(f"Loading tokenizer and model for {self.model_name} from cache/web...")
-
+            local_files_only = False
+            print(f"Loading model/tokenizer for {self.model_name} from cache/web...")
+        
+        # Load Hugging Face tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(
             load_path, 
             cache_dir=CACHE_DIR if load_path == self.model_name else None,
             local_files_only=local_files_only
         )
-        raw_model = AutoModelForSeq2SeqLM.from_pretrained(
-            load_path, 
+        
+        # Load PyTorch Seq2Seq Model
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(
+            load_path,
             cache_dir=CACHE_DIR if load_path == self.model_name else None,
             local_files_only=local_files_only
         )
         
+        # Apply dynamic quantization to linear layers if enabled
         if self.use_quantization:
-            print("Applying dynamic quantization to model (CPU)...")
-            start_time = time.time()
-            # Quantize PyTorch linear layers dynamically to 8-bit integers
+            print("Applying PyTorch dynamic 8-bit quantization targeting linear layers...")
             self.model = torch.quantization.quantize_dynamic(
-                raw_model,
+                self.model,
                 {torch.nn.Linear},
                 dtype=torch.qint8
             )
-            print(f"Quantization completed in {time.time() - start_time:.2f}s.")
-        else:
-            self.model = raw_model
             
     def translate(self, text: str, src_lang: str, tgt_lang: str) -> dict:
         """
-        Translates text from src_lang to tgt_lang.
+        Translates text from src_lang to tgt_lang using PyTorch.
         Returns a dictionary containing the translated text and performance metrics.
         """
         if not text or not text.strip():
@@ -91,24 +91,28 @@ class TranslationEngine:
             
         start_time = time.time()
         
-        # Set source language in tokenizer
-        self.tokenizer.src_lang = src_lang
-        
-        # Tokenize inputs
-        inputs = self.tokenizer(text, return_tensors="pt")
-        
-        # Get target language token ID
-        forced_bos_token_id = self.tokenizer.convert_tokens_to_ids(tgt_lang)
-        
-        # Generate translation
-        with torch.no_grad():
-            generated_tokens = self.model.generate(
-                **inputs,
-                forced_bos_token_id=forced_bos_token_id
-            )
+        try:
+            # Set source language on tokenizer
+            self.tokenizer.src_lang = src_lang
+            inputs = self.tokenizer(text, return_tensors="pt")
             
-        # Decode translation
-        translated_text = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
+            # Map target language code to its token ID
+            forced_bos_token_id = self.tokenizer.convert_tokens_to_ids(tgt_lang)
+            
+            # Run inference without tracking gradients (faster and uses less memory)
+            with torch.no_grad():
+                outputs = self.model.generate(
+                    **inputs,
+                    forced_bos_token_id=forced_bos_token_id,
+                    max_length=256
+                )
+            
+            # Decode generated output tokens
+            translated_text = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+            
+        except Exception as e:
+            print(f"[TRANSLATION FAILURE] {e}")
+            raise e
         
         latency = time.time() - start_time
         num_chars = len(text)

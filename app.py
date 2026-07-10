@@ -213,7 +213,7 @@ st.markdown("<h1>🔮 AI Powered Translator</h1>", unsafe_allow_html=True)
 st.markdown("<p style='font-size: 1.1rem; color: #a5b4fc; margin-bottom: 20px;'>High-fidelity, privacy-centric Neural Machine Translation running 100% locally.</p>", unsafe_allow_html=True)
 
 # 10. Translation Interface Elements
-col_lang1, col_swap, col_lang2 = st.columns([9, 2, 9])
+col_lang1, col_lang2 = st.columns(2)
 
 lang_names = list(SUPPORTED_LANGUAGES.keys())
 
@@ -225,14 +225,6 @@ with col_lang1:
         key="src_lang_select"
     )
     st.session_state.src_lang_idx = lang_names.index(src_lang_name)
-    
-with col_swap:
-    st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-    if st.button("↔ Swap", help="Swap source and target languages"):
-        temp = st.session_state.src_lang_idx
-        st.session_state.src_lang_idx = st.session_state.tgt_lang_idx
-        st.session_state.tgt_lang_idx = temp
-        st.rerun()
         
 with col_lang2:
     tgt_lang_name = st.selectbox(
